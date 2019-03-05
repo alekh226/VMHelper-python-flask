@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+      <div class="content-section">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Get Report</legend>
+                <div class="form-group" >
+                    {{ form.location.label(class="form-control-label") }}
+                    {% if form.location.errors %}
+                        {{ form.location(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.location.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.location(class="form-control form-control-lg",placeholder="Enter location seperated by coma (eg. India, kerala)") }}
+                        
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.brand.label(class="form-control-label") }}
+                    {% if form.brand.errors %}
+                        {{ form.brand(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.brand.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.brand(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit1(class="btn btn-success") }}
+            </div>
+        </form>
+    </div>
+
+{% endblock content %}
+<!--
+
+<form action = "" method = post>
+         <fieldset>
+            <legend>Select Field</legend>
+            {{ form.hidden_tag() }}
+            
+            <div style = font-size:20px; font-weight:bold; margin-left:150px;> 
+               {{ form.language.label }}<br>
+               {{ form.language }}
+               <br>
+               {{ form.submit }}
+            </div>
+            
+         </fieldset>
+      </form>
+
+-->

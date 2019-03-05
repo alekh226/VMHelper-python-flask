@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+{% block content %}
+	<div class="container-fluid">
+		<h2>Analysed result for {{brand +" in " + location}}</h2>
+
+
+
+
+
+		
+<div class="container" align="left">
+			<embed type="image/svg+xml" src={{graph_data|safe}} style='max-width:1000px'/>
+	  </div>
+
+	  <div class="container" align="center">
+			<embed type="image/svg+xml" src={{graph_data1|safe}} style='max-width:600px'/>
+	  </div>
+
+	  <!--<div class="container-fluid">
+	  		<h2>Analysis Result</h2>
+	  		<p>Positive Tweets count: {{positive_count}}  ( {{(positive_count/total_count)*100}} %)</p>
+	  		<p>Negative Tweets count: {{negative_count}}  ( {{(negative_count/total_count)*100}} %)</p>
+	  		<p>Neutral Tweets count: {{neutral_count}} ( {{(neutral_count/total_count)*100}} %)</p>
+	  </div> -->
+
+		<div class="row">
+	    <div class="col-sm-6 col-md-6 col-lg-6 " style="background-color:yellow;">
+	    	<h2 style="text-align: center;">Users</h2>
+	    	<a href="{{url_for('download_p')}}" class="btn btn-success btn-lg active" role="button" aria-pressed="true">Get +ve User List</a>
+	    	<a href="{{url_for('download_n')}}" class="btn btn-success btn-lg active" role="button" aria-pressed="true">Get Neutral User List</a>
+	       {% for tweet in tweets %}
+		        <article class="media content-section">
+		          <div class="media-body">
+		            <div class="article-metadata">
+		              <p class="mr-2">Name: {{ tweet['name'] }}</p>
+		              <small class="text-muted">Screen Name: {{ tweet['screen_name'] }}</small>
+		            </div>
+
+		            <p class="article-title">Polarity: {{ tweet['polarity'] }}</p>
+		            <p class="article-content">{{ 'Class: '+ tweet['sentiment'] }}</p>
+		          </div>
+		        </article>
+    		{% endfor %}
+	    </div>
+	    <div class="col-sm-6 col-md-6 col-lg-6 " style="background-color:pink;">
+	      <h2 style="text-align: center;">Influential People List</h2>
+	      <a href="{{url_for('download_inf')}}" class="btn btn-success btn-lg active" role="button" aria-pressed="true">Download Influential Users List</a>
+	      {% for tweet in tweets_inf %}
+		        <article class="media content-section">
+		          <div class="media-body">
+		            <div class="article-metadata">
+		              <p class="mr-2">Name: {{ tweet['name'] }}</p>
+		              <small class="text-muted">Screen Name: {{ tweet['screen_name'] }}</small>
+		            </div>
+
+		            <p class="article-title">Followers Count: {{ tweet['followers_count'] }}</p>
+		            <p class="article-content">Favourites Count: {{ tweet['favourites_count'] }}</p>
+		            <p class="article-title">Friends Count: {{ tweet['friends_count'] }}</p>
+		          </div>
+		        </article>
+    		{% endfor %}
+	    </div>
+	  </div>
+		
+	</div>
+{% endblock content %}
