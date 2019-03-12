@@ -31,7 +31,7 @@ class sentimental_analysis():
             for i in range(0,len(data)):
                 loc= data[i]['user']['location']
                 loc=str(loc).lower()
-                if data[i]['lang']=='en' and loc== self.Location.lower():
+                if data[i]['lang']=='en' and loc.find(self.Location.lower()) > -1:
                     eng_data.append(data[i])
         del data[:]
         tweets = []
