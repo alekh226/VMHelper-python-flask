@@ -15,7 +15,6 @@ from flaskvm.final_sent import sentimental_analysis
 @app.route("/home")
 def home():
     #page = request.args.get('page', 1, type=int)
-    #posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)
     #flash(f'This is {current_user}','success')
     return render_template('home.html')
 
@@ -197,8 +196,6 @@ def getreport():
           if form.validate_on_submit():
             if form.submit1.data :
                 if current_user.request_left > 0:
-                    current_user.request_left = current_user.request_left-1
-                    db.session.commit()
                     brand= form.brand.data
                     location = form.location.data
                     return redirect(url_for('showreport', brand=brand,location=location))
@@ -219,43 +216,60 @@ def getreport():
 @login_required
 def showreport():
     if current_user.is_authenticated:
-        brand= request.args.get('brand')
-        location = request.args.get('location')
-        activity= Activity(brand=brand,location=location,user_id=current_user.id)
-        db.session.add(activity)
-        db.session.commit()
-        sent = sentimental_analysis(brand,location)
-        sent.analyse()
-        tweets = sent.get_tweets()
-        tweets_inf = sent.get_tweets_inf()
-        positive_count=sent.get_positive_tweets_count()
-        negative_count=sent.get_negative_tweets_count()
-        neutral_count=sent.get_neutral_tweets_count()
-        total_count = positive_count+negative_count+neutral_count
-        pubdate=[]
-        polarity=[]
-        for item in tweets :
-            pubdate.append(item['pubdate'])
-            polarity.append(item['polarity'])
-        graph = pygal.Line()
-        graph.title = 'Change in popularity of brand over time.'
-        graph.x_labels = pubdate
-        graph.add('Polarity',  polarity)
-        graph_data = graph.render_data_uri()
+        if current_user.request_left > 0:
+            current_user.request_left = current_user.request_left-1
+            db.session.commit()
+            brand= request.args.get('brand')
+            location = request.args.get('location')
+            activity= Activity(brand=brand,location=location,user_id=current_user.id)
+            db.session.add(activity)
+            db.session.commit()
+            sent = sentimental_analysis(brand,location)
+            sent.analyse()
+            tweets = sent.get_tweets()
+            tweets_inf = sent.get_tweets_inf()
+            positive_count=sent.get_positive_tweets_count()
+            negative_count=sent.get_negative_tweets_count()
+            neutral_count=sent.get_neutral_tweets_count()
+            total_count = positive_count+negative_count+neutral_count
+            pubdate=[]
+            polarity=[]
+            sum_polarity=0
+            if location=='all':
+                    sum_polarity=tweets[0]['polarity']
+                    polarity.append(sum_polarity)
+            for i in range(1,total_count) :
+                if location=='all':
+                    if i%100 !=0 :
+                        sum_polarity+=tweets[i]['polarity']
+                    else :
+                        pubdate.append(tweets[i]['pubdate'])
+                        polarity.append(sum_polarity/100)
+                        sum_polarity=0
+                else:
+                    pubdate.append(tweets[i]['pubdate'])
+                    polarity.append(tweets[i]['polarity'])
+            graph = pygal.Line()
+            graph.title = 'Change in popularity of brand over time.'
+            graph.x_labels = pubdate
+            graph.add('Polarity',  polarity)
+            graph_data = graph.render_data_uri()
 
 
 
-        graph1= pygal.Pie()
-        graph1.title = 'Analysis Report'
-        graph1.add('Positive Users',  positive_count)
-        graph1.add('Negative Users',  negative_count)
-        graph1.add('Neutral Users', neutral_count)
-        graph_data1 = graph1.render_data_uri()
+            graph1= pygal.Pie()
+            graph1.title = 'Analysis Report'
+            graph1.add('Positive Users',  positive_count)
+            graph1.add('Negative Users',  negative_count)
+            graph1.add('Neutral Users', neutral_count)
+            graph_data1 = graph1.render_data_uri()
 
-        #flash(f'searched for {brand+" "+location}!', 'success')
-        return render_template('show_report.html',title='Show Report',brand=brand,location=location, tweets=tweets,tweets_inf=tweets_inf, graph_data=graph_data
-            ,positive_count=positive_count,negative_count=negative_count,neutral_count=neutral_count,total_count=total_count,graph_data1=graph_data1)
-     
+            #flash(f'searched for {brand+" "+location}!', 'success')
+            return render_template('show_report.html',title='Show Report',brand=brand,location=location, tweets=tweets,tweets_inf=tweets_inf, graph_data=graph_data
+                ,positive_count=positive_count,negative_count=negative_count,neutral_count=neutral_count,total_count=total_count,graph_data1=graph_data1)
+        else:
+            flash('Plan Expired! please update the plan','danger')
+            return redirect(url_for('account'))
     else :
         flash('You dont have access to this place. please login first','danger')
         return redirect(url_for('home'))
@@ -294,6 +308,17 @@ def download_inf():
                      mimetype='text/csv',
                      attachment_filename='inf_users.csv',
                      as_attachment=True)
+
+    else :
+        flash('You dont have access to this place. please login first','danger')
+        return redirect(url_for('home'))
+
+@app.route("/activity")
+@login_required
+def activity_info():
+    if current_user.is_authenticated:
+        activity_list = Activity.query.filter_by(user_id=current_user.id).order_by(Activity.date.desc()).all()
+        return render_template('activity.html', title='Activity',activity_list=activity_list)
 
     else :
         flash('You dont have access to this place. please login first','danger')

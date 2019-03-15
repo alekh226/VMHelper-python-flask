@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% block content %}
+    <article class="media content-section">
+    <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + activity_list[0].client.image_file) }}">
+    <div class="media-body">
+      <div class="article-metadata">
+        <a class="mr-2" href="{{url_for('account')}}">{{ activity_list[0].client.username }}</a>
+      </div>
+      
+    <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Date</th>
+            <th>Brand</th>
+            <th>Location</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for activity in activity_list %}
+              <tr>
+                <td>{{ activity.id}}</td>
+                <td>{{ activity.date }}</td>
+                <td>{{activity.brand}}</td>
+                <td>{{ activity.location }}</td>
+              </tr>
+            {% endfor %}
+         </tbody>
+  </table>
+
+
+     <!-- {% for activity in activity_list %}
+        <article class="media content-section">
+          <div class="media-body">
+            <div class="article-metadata">
+              <p class="mr-2">Id:{{ activity.id}} </p>
+              <small class="text-muted"> Date:{{ activity.date }}</small>
+            </div>
+            <p class="article-title" >Brand:{{ activity.brand }}</p>
+            <p class="article-content">Location:{{ activity.location }}</p>
+          </div>
+        </article>
+     {% endfor %} -->
+ </div>
+</article>
+{% endblock content %}

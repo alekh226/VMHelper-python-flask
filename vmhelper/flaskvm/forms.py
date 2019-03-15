@@ -85,6 +85,6 @@ class ResetPasswordForm(FlaskForm):
 
 
 class GetReportForm(FlaskForm):
-    brand = SelectField('Brands', choices = [('xiaomi', 'Xiaomi'),('samsung', 'Samsung'),('nokia', 'Nokia'),('vivo','Vivo'),('oppo','Oppo')])
+    brand = SelectField('Brands', choices = [('xiaomi', 'Xiaomi'),('samsung', 'Samsung'),('nokia', 'Nokia'),('vivo','Vivo'),('oppo','Oppo'),('apple','Apple')])
     location = StringField('Location',validators=[DataRequired()])
     submit1 = SubmitField("Get Report")

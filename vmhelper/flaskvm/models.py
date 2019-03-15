@@ -22,7 +22,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(60), nullable=False)
     active_plan= db.Column(db.String(20), db.ForeignKey('plan.plan_name'), nullable=False)
     request_left=db.Column(db.Integer,nullable=False)
-    activities = db.relationship('Activity', backref='user', lazy=True)
+    activities = db.relationship('Activity', backref='client', lazy=True)
 
     def get_reset_token(self, expires_sec=1800):
         s = Serializer(app.config['SECRET_KEY'], expires_sec)

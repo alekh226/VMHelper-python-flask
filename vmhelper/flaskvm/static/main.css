@@ -281,7 +281,7 @@ a.article-title:hover {
 
 
 
-.split {
+/*.split {
   position: fixed;
   z-index: 1;
   top: 30px;
@@ -306,4 +306,4 @@ a.article-title:hover {
 centered img {
   width: 150px;
   border-radius: 50%;
-}
+}*/
